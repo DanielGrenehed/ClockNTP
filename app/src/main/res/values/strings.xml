@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ClockNTP</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="_10_25">10:25</string>
+    <string name="_0_se_pool_ntp_org">0.se.pool.ntp.org</string>
+    <string name="hello">Hello</string>
+</resources>
