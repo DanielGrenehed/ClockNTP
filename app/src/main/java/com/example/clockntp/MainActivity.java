@@ -66,7 +66,10 @@ public class MainActivity extends AppCompatActivity {
     private void createButton() {
         Button button = findViewById(R.id.Connect_Button);
         button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) { toggleNTP(); }
+            public void onClick(View v) {
+                toggleNTP();
+                mediator.postTime(ui_clock);
+            }
         });
         ntp_button = new NTPButton(button);
     }
