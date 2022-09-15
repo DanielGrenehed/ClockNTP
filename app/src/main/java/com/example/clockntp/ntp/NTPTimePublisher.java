@@ -159,6 +159,7 @@ public class NTPTimePublisher implements TimePublisher {
                 *   Post time to TimeSubscriber
                 * */
                 subscriber.onTick(new Date(ntp_time));
+                listener.onConnect(hostname);
 
 
             } catch (Exception e) {

@@ -1,14 +1,21 @@
 package com.example.clockntp;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+
 import com.example.clockntp.clock.SystemTimePublisher;
 import com.example.clockntp.clock.TimePublisher;
 import com.example.clockntp.clock.TimeSubscriber;
 import com.example.clockntp.ntp.ConnectionListener;
 import com.example.clockntp.ntp.NTPTimePublisher;
 
+
 public class TimePublisherMediator implements TimePublisher, ConnectionListener {
 
     private boolean use_ntp = false;
+    private boolean connected = false;
 
     private TimePublisher system_time = new SystemTimePublisher();
     private NTPTimePublisher ntp_time = new NTPTimePublisher();
@@ -27,9 +34,15 @@ public class TimePublisherMediator implements TimePublisher, ConnectionListener 
     * */
     @Override
     public void postTime(TimeSubscriber subscriber) {
-        if (use_ntp) ntp_time.postTime(subscriber);
-        else system_time.postTime(subscriber);
         last_subscriber = subscriber;
+        if (use_ntp) {
+            checkNetworkConnection();
+            if (connected) {
+                ntp_time.postTime(subscriber);
+                return;
+            }
+        }
+        system_time.postTime(subscriber);
     }
 
     public void enableNTP() {
@@ -63,7 +76,7 @@ public class TimePublisherMediator implements TimePublisher, ConnectionListener 
     * */
     private void notifyListener() {
         if (listener == null) return;
-        if (use_ntp) listener.onConnect(ntp_time.getHostname());
+        if (use_ntp && connected) listener.onConnect(ntp_time.getHostname());
         else listener.onDisconnect();
     }
 
@@ -77,6 +90,13 @@ public class TimePublisherMediator implements TimePublisher, ConnectionListener 
 
     public boolean usesNTP() {
         return use_ntp;
+    }
+
+
+    private void checkNetworkConnection() {
+        NetworkInfo network = MainActivity.getConnectivityManager().getActiveNetworkInfo();
+        connected = network == null ? false : network.isConnected();
+        notifyListener();
     }
 
     /*
@@ -95,7 +115,6 @@ public class TimePublisherMediator implements TimePublisher, ConnectionListener 
     @Override
     public void onDisconnect() {
         if (use_ntp) {
-            use_ntp = false;
             listener.onDisconnect();
 
             /*

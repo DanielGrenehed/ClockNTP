@@ -2,6 +2,8 @@ package com.example.clockntp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity.connectivity_manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         setContentView(R.layout.activity_main);
 
         /*
@@ -116,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+
+    private static ConnectivityManager connectivity_manager;
+    public static ConnectivityManager getConnectivityManager() {
+        return connectivity_manager;
     }
 
 }
